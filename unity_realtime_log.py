@@ -23,6 +23,7 @@ import os
 import sys
 import thread
 import time
+import tail
 
 
 
@@ -34,11 +35,10 @@ def tail_thread(tail_file):
         if os.path.isfile(tail_file):
             print "Start tail file..... %s" % tail_file
             break
-        time.sleep(1)
 
     t = tail.Tail(tail_file)
     t.register_callback(unity_log_tail)
-    t.follow(s=2)
+    t.follow(s=1)
 
 def unity_log_tail(txt):
     print(txt)
@@ -66,6 +66,9 @@ def build(method, unity_path, project_path, log_path):
             sys.stdout.write("[Unity process console output]: " + out)
             sys.stdout.flush()
 
+    time.sleep(10)
+    print 'done!'
+
 
 
 
@@ -75,9 +78,9 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description=u'Unity realtime log printing build!')
 
-    parser.add_argument('--unity', required=True, help=u'Unity executable file path')
-    parser.add_argument('--project', required=True, help=u'Unity project path')
-    parser.add_argument('--method', required=True, help=u'Unity method to call')
+    parser.add_argument('-unity', required=True, help=u'Unity executable file path')
+    parser.add_argument('-project', required=True, help=u'Unity project path')
+    parser.add_argument('-method', required=True, help=u'Unity method to call')
 
     args = parser.parse_args()
     build(args.method, args.unity, args.project, os.path.join(args.project, '__kellylog.txt'))

@@ -23,8 +23,8 @@ unity_realtime_log.bat -unity C:\Unity\Unity.exe -project C:\UnityProjectPath -m
 On Mac:
 
 ```shell
-unity_realtime_log.sh -unity C:\Unity\Unity.exe -project C:\UnityProjectPath -method GameEditor.BuildMethod
-```
+unity_realtime_log.sh -unity /Applications/Unity/Unity.app/Contents/MacOS/Unity -project ~/UnityProjectPath -method GameEditor.BuildMethod
+```                          -
 
 
 Or Python:
