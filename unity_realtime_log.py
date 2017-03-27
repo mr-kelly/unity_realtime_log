@@ -29,10 +29,11 @@ import tail
 
 
 def tail_thread(tail_file):
+
     print "wait for tail file ... %s" % tail_file
 
     while True:
-        if os.path.isfile(tail_file):
+        if os.path.exists(tail_file):
             print "Start tail file..... %s" % tail_file
             break
 
@@ -51,12 +52,16 @@ def build(method, unity_path, project_path, log_path):
     build_cmd = [unity_path, '-batchmode', '-projectPath', project_path, '-nographics', '-executeMethod', method, '-logFile', log_path, '-quit']
     print 'Unity running ....'
 
-    process = subprocess.Popen(
-        build_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=project_path
-    )
+    if os.path.exists(log_path):
+        os.remove(log_path)
+        print 'delete %s' % log_path
 
     # new thread to tail log file
     thread.start_new_thread(tail_thread, (log_path, ))
+
+    process = subprocess.Popen(
+        build_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=project_path
+    )
 
     while True:
         out = process.stdout.read(1)
@@ -66,12 +71,15 @@ def build(method, unity_path, project_path, log_path):
             sys.stdout.write("[Unity process console output]: " + out)
             sys.stdout.flush()
 
-    time.sleep(10)
+    time.sleep(5)
     print 'done!'
 
 
 
 
+
+def fullpath(path):
+    return os.path.abspath(os.path.expanduser(path))
 
 if __name__ == '__main__':
     print COMMENT
@@ -83,4 +91,4 @@ if __name__ == '__main__':
     parser.add_argument('-method', required=True, help=u'Unity method to call')
 
     args = parser.parse_args()
-    build(args.method, args.unity, args.project, os.path.join(args.project, '__kellylog.txt'))
+    build(args.method, fullpath(args.unity), fullpath(args.project), fullpath(os.path.join(args.project, '__kellylog.txt')))

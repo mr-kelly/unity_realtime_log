@@ -24,7 +24,7 @@ On Mac:
 
 ```shell
 unity_realtime_log.sh -unity /Applications/Unity/Unity.app/Contents/MacOS/Unity -project ~/UnityProjectPath -method GameEditor.BuildMethod
-```                          -
+```
 
 
 Or Python:
