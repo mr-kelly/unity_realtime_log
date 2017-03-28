@@ -1,1 +1,1 @@
-import unity_realtime_log
+from unity_realtime_log import *
