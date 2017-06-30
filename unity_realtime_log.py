@@ -2,10 +2,14 @@
 
 COMMENT = """
  ##############################################
-##                                            ##
-##            Peilin Kelly Chan               ##
+##                  Author                    ##
+##             Peilin Kelly Chan              ##
 ##     <https://github.com/mr-kelly>          ##
 ##            <23110388@qq.com>               ##
+##                                            ##
+##            Modify By Lohanry               ##
+##      <https://github.com/yaogunfantuan>    ##
+##      Now Support Custom Unity Command!!!   ##
 ##                                            ##
 ##     a cross-platform build script for      ##
 ##  Unity3D console mode realtime log output  ##
@@ -44,14 +48,14 @@ def tail_thread(tail_file):
 def unity_log_tail(txt):
     print(txt)
 
-def build(method, unity_path, project_path, log_path):
+def build(method, unity_path, project_path, log_path ,otherUnitySetting):
     """
     call unity process to build
     """
 
-    build_cmd = [unity_path, '-batchmode', '-projectPath', project_path, '-nographics', '-executeMethod', method, '-logFile', log_path, '-quit']
+    build_cmd = unity_path+" "+'-batchmode'+" "+'-projectPath'+" "+project_path+" "+'-nographics'+" "+'-executeMethod'+" "+method+" "+'-logFile'+" "+log_path+" "+'-quit'+" "+otherUnitySetting
+    print build_cmd;
     print 'Unity running ....'
-
     if os.path.exists(log_path):
         os.remove(log_path)
         print 'delete %s' % log_path
@@ -60,7 +64,7 @@ def build(method, unity_path, project_path, log_path):
     thread.start_new_thread(tail_thread, (log_path, ))
 
     process = subprocess.Popen(
-        build_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=project_path
+        build_cmd, shell=True,stdout=subprocess.PIPE, stderr=subprocess.STDOUT
     )
 
     while True:
@@ -89,6 +93,11 @@ if __name__ == '__main__':
     parser.add_argument('-unity', required=True, help=u'Unity executable file path')
     parser.add_argument('-project', required=True, help=u'Unity project path')
     parser.add_argument('-method', required=True, help=u'Unity method to call')
+    parser.add_argument('-logFile',required=True,help=u'Unity Log path')
+    parser.add_argument('-otherUnitySetting',required=False,help=u'Custom Unity Command')
 
     args = parser.parse_args()
-    build(args.method, fullpath(args.unity), fullpath(args.project), fullpath(os.path.join(args.project, '__kellylog.txt')))
+    otherUnitySetting = "NoOtherUnitySetting"
+    if (args.otherUnitySetting != None):
+        otherUnitySetting = args.otherUnitySetting
+    build(args.method, args.unity, args.project,args.logFile,otherUnitySetting)
